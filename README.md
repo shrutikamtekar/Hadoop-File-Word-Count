@@ -10,7 +10,7 @@ This porject counts the occurence of a word in all the files present in the hado
 •	The mapper 2 extracts the word from the string sent to it from the intermediate file send the word and 1 to reducer 2.  
 •	The reducer 2 calculates the sum of a word in all files and the final output is then written to the hadoop output folder.  
 
-### Install hadoop standalone single cluster
+### Install standalone hadoop single node cluster
 Refer to installation steps in the repository
 
 ### Steps to execute are 
