@@ -1,0 +1,118 @@
+Install standalone hadoop environment for a single node cluster on the system. The steps to install hadoop are as follows:
+1.	Install java version 8
+a.	apt-get install openjdk-8-jdk as root
+b.	check if java is running using : javac – version
+c.	copy the java path : update-alternatives –config java 
+2.	Edit the environment variable to add JAVA_HOME
+a.	gedit /etc/environment
+b.	insert: JAVA_HOME=<YOUR JAVA HOME PATH>
+c.	source /etc/environment
+d.	check if java is working : echo $JAVA_HOME
+3.	Installing SSH 
+a.	apt-get install ssh as root
+b.	Generate public or private rsa key pair: ssh-keygen –t rsa P “” 
+c.	Press enter 
+d.	Make public key authorized: cat $HOME/.ssh/id_rsa.pub>>$HOME/.ssh/authorized-keys
+e.	Check if ssh is working: ssh localhost 
+4.	Download hadoop from official site 
+a.	select 2.7.3 binary
+b.	extract tar –xvzf <hadoop download path>
+5.	Edit the bash file
+a.	gedit ~/.bashrc 
+b.	copy and paste
+
+#HADOOP VARIABLES START
+export JAVA_HOME= <YOUR JAVA HOME PATH>
+export HADOOP_INSTALL= <HADOOP HOME PATH>
+export PATH=$PATH:$HADOOP_INSTALL/bin
+export PATH=$PATH:$HADOOP_INSTALL/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_HOME=$HADOOP_INSTALL
+export HADOOP_HDFS_HOME=$HADOOP_INSTALL
+export YARN_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_INSTALL/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_INSTALL/lib"
+#HADOOP VARIABLES END
+
+c.	source ~/.bashrc
+6.	Confirgure hadoop 
+a.	Go to ../hadoop-2.7.3
+b.	gedit hadoop-env.sh 
+c.	copy and paste
+
+export JAVA_HOME=<YOUR JAVA HOME PATH>
+
+d.	make directory in the folder where hadoop is extracted
+mkdir hadoop_store
+e.	Go to hadoop_store directory
+mkdir hdfs
+f.	Go to hdfs
+mkdir namenode
+mkdir datanode
+Note: namenode and datanode should be present in /hadoop_store/hdfs
+
+g.	Go to ../hadoop-2.7.3
+h.	gedit hdfs-site.xml
+i.	copy and paste between configuration 
+<property>
+  <name>dfs.replication</name>
+  <value>1</value>
+  <description>Default block replication.
+  The actual number of replications can be specified when the file is created.
+  The default is used if replication is not specified in create time.
+  </description>
+ </property>
+ <property>
+   <name>dfs.namenode.name.dir</name>
+  <value>file:######NAMENODE_FOLDER_PATH######</value>
+ </property>
+ <property>
+   <name>dfs.datanode.data.dir</name>
+   <value>file:######DATANODE_FOLDER_PATH######</value>
+ </property>
+
+Note: replace the path for namenode and datanode for your path
+
+j.	Make mkdir tmp inside ../hadoop-2.7.3/
+k.	Go to ../hadoop-2.7.3/
+l.	gedit core-site.xml 
+m.	copy and paste between configuration 
+
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>######TMP_FOLDER_PATH######</value>
+  <description>A base for other temporary directories.</description>
+ </property>
+ 
+ <property>
+  <name>fs.default.name</name>
+  <value>hdfs://localhost:54310</value>
+  <description>The name of the default file system.  A URI whose
+  scheme and authority determine the FileSystem implementation.  The
+  uri's scheme determines the config property (fs.SCHEME.impl) naming
+  the FileSystem implementation class.  The uri's authority is used to
+  determine the host, port, etc. for a filesystem.</description>
+ </property>
+
+Note: change the path to tmp directory location
+
+n.	cp mapred-site.xml.template mapred-site.xml
+o.	gedit mapred-site.xml
+p.	copy and paste the code between the configuration 
+
+<property>
+  <name>mapred.job.tracker</name>
+  <value>localhost:54311</value>
+  <description>The host and port that the MapReduce job tracker runs
+  at.  If "local", then jobs are run in-process as a single map
+  and reduce task.
+  </description>
+ </property>
+
+7.	Format hadoop file system
+hadoop namenode –format
+8.	Go to sbin folder to start the node
+a.	Start-all.sh
+9.	Check on 
+a.	Localhost:8088
+b.	Localhost:50070
